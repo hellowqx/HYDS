@@ -22,6 +22,8 @@ urlpatterns = [
     url(r'^users/',include('users.urls',namespace='users')),
     url(r'^store/',include('store.urls',namespace='store')),
     url(r'^goods/',include('goods.urls',namespace='goods')),
+    url(r'^shopcart/',include('shopcart.urls',namespace='shopcart')),
+    url(r'^search/',include("haystack.urls")), # 配置检索的路由
 
 
 

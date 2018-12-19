@@ -3,10 +3,11 @@ from . import models
 from goods.models import GoodsType
 from django.http import JsonResponse
 from django.core.serializers import serialize
+from django.core.cache import cache
+from . import utils
 
 
-
-
+#类型增加
 def add_type(request):
     if request.method=='GET':
         return render(request,'goods/add_type.html',{'msg':'请仔细填写信息：'})
@@ -30,7 +31,7 @@ def add_type(request):
             return render(request, 'goods/add_type.html', {'msg': '商品类型添加成功'})
 
 
-
+#添加商品
 def add_goods(request,s_id):
 
     type1 = GoodsType.objects.filter(gt_parent__isnull=True)
@@ -78,6 +79,77 @@ def add_goods(request,s_id):
         except Exception as e :
             print(e,'商品添加错误')
             return render(request, 'goods/add_goods.html', {'msg': '商品类型添加失败','s_id':s_id})
+
+
+#修改商品信息
+def update_goods(request,g_id):
+    type1 = GoodsType.objects.filter(gt_parent__isnull=True)
+    goods=models.Goods.objects.get(pk=g_id)
+    if request.method == 'GET':
+        return render(request,'goods/update_goods.html',{'goods':goods,'type1':type1})
+    elif request.method == 'POST':
+        name = request.POST['name'].strip()
+        price = request.POST['price'].strip()
+        stock = request.POST['stock'].strip()
+        desc = request.POST['desc'].strip()
+        status = request.POST['status'].strip()
+        # type2 = request.POST['type2']
+        if name == '':
+            return render(request, 'goods/update_goods.html', {'msg': '商品名字为空','goods':goods})
+        if price == '':
+            return render(request, 'goods/update_goods.html', {'msg': '商品价格为空','goods':goods})
+        if desc == '':
+            return render(request, 'goods/update_goods.html', {'msg': '商品描述为空','goods':goods})
+        if stock == '':
+            return render(request, 'goods/update_goods.html', {'msg': '商品库存为空','goods':goods})
+        if status == '':
+            return render(request, 'goods/update_goods.html', {'msg': '商品状态为空','goods':goods})
+        # goods_type = models.GoodsType.objects.get(pk=type2)
+
+        try:
+            path = request.FILES.getlist('cover')
+            if len(path) == 0:
+                print('没有传照片')
+                goods.name = name
+                goods.price=price
+                goods.stock=stock
+                goods.status=status
+                goods.desc=desc
+                goods.save()
+                utils.goods_list_cache(request, s_id=goods.goods_store_id, ischange=True)
+                return redirect(reverse('goods:goods_list', kwargs={'s_id': goods.goods_store_id}))
+            else:
+                goods.name = name
+                goods.price = price
+                goods.stock = stock
+                goods.status = status
+                goods.desc = desc
+                goods.save()
+                # 存储多张图片
+                for i in path:
+                    print(path,3333333333333333333333333)
+                    path = models.GoodsImg(path=i, goods=goods)
+                    path.save()
+                utils.goods_list_cache(request,s_id=goods.goods_store_id,ischange=True)
+                return redirect(reverse('goods:goods_list',kwargs={'s_id':goods.goods_store_id}))
+        except Exception as e :
+            print(e,'商品修改错误')
+            return render(request, 'goods/update_goods.html', {'msg': '商品修改失败','goods':goods})
+
+
+#展示商品详情
+def goods_info(request,g_id):
+    goods=models.Goods.objects.get(pk=g_id)
+    # for i in goods.goodsimg_set.all:
+    #     print(i.path,99999999999999999999)
+    return render(request,'goods/goods_info.html',{'goods':goods})
+
+
+
+#商品列表
+def goods_list(request,s_id):
+    goodss=utils.goods_list_cache(request,s_id)
+    return render(request,'goods/goods_list.html',{'goodss':goodss})
 
 #商品类型2
 def select2(request):

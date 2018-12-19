@@ -41,6 +41,9 @@ INSTALLED_APPS = [
     'users',
     'goods',
     'store',
+    'shopcart',
+    'haystack',
+    'mysearch'
 ]
 
 MIDDLEWARE = [
@@ -130,8 +133,6 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATICFILES_DIRS=[
     os.path.join(BASE_DIR,'static')
-
-
 ]
 #login_request 配置
 LOGIN_URL = '/users/logins/'
@@ -150,3 +151,34 @@ EMAIL_HOST_PASSWORD = 'ovtrvillkwoubbjf'
 EMAIL_USE_TLS = True
 # 收件人看到的发件人, 必须是一直且有效的
 EMAIL_FROM = '测试邮件注册<741599771@qq.com>'
+
+
+SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+SESSION_CACHE_ALIAS = "default"
+
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/14",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    }
+}
+
+#全文检索配置
+HAYSTACK_CONNECTIONS = {
+    'default': {
+    'ENGINE': 'mysearch.whoosh_cn_backend.WhooshEngine', # 将来需要修改
+    'PATH': os.path.join(BASE_DIR, 'whoosh_index'),
+}
+}
+
+#全文检索分页
+HAYSTACK_SEARCH_RESULTS_PER_PAGE = 10
+#索引生成设置
+HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
+
+
+# 分页
+PAGESIZE = 10

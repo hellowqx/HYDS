@@ -12,10 +12,22 @@ from django.conf import settings
 from django.core.mail import send_mail
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from django.http import JsonResponse
+from goods.models import Goods
+from utils import utils
+from django.core.paginator import Paginator
+
 
 #主页
 def index(request):
-    return render(request,'index.html',)
+    # 当前页
+    pageNow = int(request.GET.get('pageNow', 1))
+    # 展示所有商品
+    goods = utils.cache_allgoods()
+    pagesize = settings.PAGESIZE
+    paginator = Paginator(goods, pagesize)
+    page = paginator.page(pageNow)
+    goods=Goods.objects.filter()
+    return render(request,'index.html',{'goods':goods,'page':page})
 
 
 # 注册函数

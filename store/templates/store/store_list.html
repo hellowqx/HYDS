@@ -11,7 +11,7 @@
                   <td>店铺名字</td>
                   <td>店铺介绍</td>
                   <td>店铺状态</td>
-                  <td>修改店铺</td>
+
                   <td>店铺详情</td>
               </tr>
               {% for i in lists %}
@@ -28,7 +28,7 @@
                 <td style="line-height: 100px;">---店铺关闭---</td>
                 {% endif %}
 
-                <td ><a href="{% url 'store:storeinfo' i.id %}"><button type="button"  style="height: 35px;margin-top: 35px;background:#C49173;width: 70px;" >店铺详情</button></a></td>
+                <td ><a href="{% url 'store:storeinfo' i.id %}"><button type="button"  style="height: 35px;margin-top: 35px;background:#C49173;width: 90px;" >店铺详情</button></a></td>
             </tr>
               {% empty%}
               <tr>

@@ -1,0 +1,210 @@
+{% extends 'index.html'%}
+{% block title %}购物车页面{% endblock %}
+{% block link %}
+<link rel="stylesheet" href="/static/css/style.css">
+<link rel="stylesheet" href="/static/css/index.css">
+<link rel="stylesheet" href="/static/css/shopcar.css">
+<script src="/static/shopcart/jquery-1.12.4.min.js"></script>
+<script type="text/javascript" src="/static/js/jquery-1.12.4.min.js"></script>
+<script type="text/javascript" src="/static/js/index.js"></script>
+<script type="text/javascript" src="/static/js/jquery.validate.js"></script>
+<script type="text/javascript" src="/static/js/messages_zh.js"></script>
+<script type="text/javascript" src="/static/js/jquery.cookie.js"></script>
+<script type="text/javascript" src="/static/js/shopcart.js"></script>
+<script type="text/javascript" src="/static/js/shopcar.js"></script>
+<link rel="stylesheet" href="/static/shopcart/shop-cart.css">
+<script type="text/javascript" src="/static/shopcart/index.js"></script>
+{% endblock %}
+{% block s %}{% endblock %}
+{% block content %}
+
+
+<!-- 购物车内容 -->
+
+<div class='wrap'>
+    <div class='warm_tip'><span>温馨提示：</span>购物车中商品无法保留库存，请您及时下单结算</div>
+    <div class="shopping_nr" style="margin-top: -30px; ">
+        <div class="car-top">
+            <div class="car-top-top">
+                <p>我的购物车</p>
+                <a href="javascript:;">继续逛逛 &gt;</a>
+            </div>
+            <div class="car-main">
+                <div class="car-main-top">
+                    <div class="cart-select">
+                        <!--<p class="select selected"></p><input type="hidden" value="" />
+                        <span>全选</span>-->
+                    </div>
+                    <div class="cart-good">
+                        <span>商品</span>
+                    </div>
+                    <div class="cart-spec pull-left">
+                        <span>规格</span>
+                    </div>
+                    <div class="cart-price pull-left">
+                        <span>单价(元)</span>
+                    </div>
+                    <div class="cart-number pull-left">
+                        <span>数量</span>
+                    </div>
+                    <div class="cart-sum pull-left">
+                        <span>小计(元)</span>
+                    </div>
+                    <div class="cart-action pull-left">
+                        <span>操作</span>
+                    </div>
+                </div>
+                <div class="car-main-main">
+                    <div class="car-main-main-top">
+                        <ul class="list-main">
+                            <li class="list-main-x">
+                                {% for i in shoplist %}
+                                <div class="shop-list">
+                                    <div class="shop-list-first"></div>
+                                    <div class="shop-list-img">
+                                        <a href="javascript:;">
+                                            <img src="/{{i.goods.goodsimg_set.all.last.path}}" alt="">
+                                        </a>
+                                    </div>
+                                    <div class="shop-list-name">
+                                        <p><a href="javascript:;">{{i.goods.name}}</a></p>
+                                    </div>
+                                    <div class="shop-list-num">
+                                        <p>{{i.num}}</p>
+                                    </div>
+                                    <div class="shop-jg">
+                                        <p class="play-d" date-m="{{i.goods.price}}">￥{{i.goods.price}}</p>
+                                    </div>
+                                    <div class="shop-nub">
+                                        <span class="nub-jian">-</span>
+                                        <input type="text" value="{{i.num}}" class="shop-nub-zeng">
+                                        <span class="nub-jia">+</span>
+                                    </div>
+                                    <div class="shop-sum">
+                                        <p>￥{{i.subtotal}}</p>
+                                    </div>
+                                    <div class="shop-dlt">
+                                        <a href="{% url 'shopcart:del_shopcart' i.id %}"><p class="dlt">删除</p></a>
+                                    </div>
+                                </div>
+                                {% empty%}
+                                <p>购物车没有商品</p>
+                                {% endfor %}
+                            </li>
+                        </ul>
+                    </div>
+
+                </div>
+                <div class="car-main-bottom">
+                    <div class="play">
+                        <span>已选择 <b>{{shoplist|length}}件</b> 商品  |  订单金额</span>
+                        <p class="sum">￥0</p>
+                        <a>去结算</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="div_deleted">
+    <h1 id="show_del_msg"></h1>
+    <ul class='deleted'>
+
+    </ul>
+</div>
+<script type="text/javascript">
+    /*左右增加减少*/
+    function zengjia(obj) {
+        var num = $(obj).siblings("input[name='goods_number']").val();
+        num++;
+        if (num > 999) {
+            num = 999;
+        }
+        $(obj).siblings("input[name='goods_number']").val(num);
+        rec_id = $(obj).siblings("input[name='recId']").val();
+        changeCart(rec_id, num)
+    }
+
+    function jianshao(obj) {
+        var num = $(obj).siblings("input[name='goods_number']").val();
+        num--;
+        if (num < 1) {
+            num = 1;
+        }
+        $(obj).siblings("input[name='goods_number']").val(num);
+        rec_id = $(obj).siblings("input[name='recId']").val();
+        changeCart(rec_id, num)
+    }
+
+    function gaibian(obj) {
+        var num = $(obj).val();
+        if (isNaN(num) || num <= 0) {
+            alert('请输入正确的购买数量');
+            return;
+        }
+
+        $(obj).val(num);
+        rec_id = $(obj).siblings("input[name='recId']").val();
+        changeCart(rec_id, num)
+    }
+</script>
+
+
+<div class="shopping_order_title">
+    韩都官网为您推荐
+    <span class='fr'>
+		        <a href='javascript:void(0)' class='current t1'>最近浏览过的商品</a>
+		        <a href='javascript:void(0)' class='t2'>最近收藏的</a>
+		    </span>
+</div>
+<div id="slides">
+    <div class="slides_container">
+        <div class="slide">
+            <div class="item">
+                <a href="goods-1048857.html" title="" target="_blank">
+                    <img src="/static/img/shopcar/1471375810213443189.jpg" alt=""
+                         title="Soneed韩版2016秋装新款女装低腰毛边磨皮开叉牛仔裤UE6161皛0816">
+                </a>
+                <p><a href="goods-1048857.html" title=""
+                      target="_blank">Soneed韩版2016秋装新款女装低腰毛边磨皮开叉牛仔裤UE6161皛0816</a></p>
+                <p><span class="price">258.00</span></p>
+            </div>
+            <div class="item">
+                <a href="goods-1048859.html" title="" target="_blank">
+                    <img src="/static/img/shopcar/1471375816432837124.jpg" alt=""
+                         title="Soneed韩版2016秋装新款女装宽松立领拼接拉链雪纺衫UE6044皛0816">
+                </a>
+                <p><a href="goods-1048859.html" title=""
+                      target="_blank">Soneed韩版2016秋装新款女装宽松立领拼接拉链雪纺衫UE6044皛0816</a></p>
+                <p><span class="price">188.00</span></p>
+            </div>
+            <div class="item">
+                <a href="goods-1050072.html" title="" target="_blank">
+                    <img src="/static/img/shopcar/1472659575185935710.jpg" alt=""
+                         title="韩都衣舍2016韩版女装秋装新款宽松显瘦印花长袖衬衫HO5794">
+                </a>
+                <p><a href="goods-1050072.html" title="" target="_blank">韩都衣舍2016韩版女装秋装新款宽松显瘦印花长袖衬衫HO5794魭</a></p>
+                <p><span class="price">218.00</span></p>
+            </div>
+        </div>
+    </div>
+</div>
+<div class='h' style='display:none  '>
+    <div class="slide">
+        <div class="item">
+            <a href="goods-1048857.html" title="" target="_blank">
+                <img src="http://s.handuyishe.com/images/201608/thumb_img/1471375810213443189.jpg"
+                     alt="Soneed韩版2016秋装新款女装低腰毛边磨皮开叉牛仔裤UE6161皛0816"
+                     title="Soneed韩版2016秋装新款女装低腰毛边磨皮开叉牛仔裤UE6161皛0816">
+            </a>
+            <p><a href="goods-1048857.html" title="" target="_blank">Soneed韩版2016秋装新款女装低腰毛边磨皮开叉牛仔裤UE6161皛0816 </a>
+            </p>
+            <p><span class="price">￥258</span></p>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
