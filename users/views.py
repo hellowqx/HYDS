@@ -74,6 +74,7 @@ def logins(request):
             next_url = request.GET['next']
         except:
             next_url = '/users/index/'
+        print(next_url)
         return render(request, 'users/login.html', {'msg': '请填写登录信息！', 'next_url': next_url})
     elif request.method == 'POST':
         request.session['num'] += 1
@@ -291,3 +292,73 @@ def changepwd(request):
         except Exception as e:
             print(e,22222222222222222222)
             return render(request, 'users/changeinfo.html', {"msg": '密码修改失败！！'})
+
+#添加地址
+def add_addr(request):
+    if request.method =='GET':
+        return render(request,'users/add_addr.html')
+    elif request.method == 'POST':
+        recv=request.POST['recv'].strip()
+        phone=request.POST['phone'].strip()
+        province=request.POST['province'].strip()
+        city=request.POST['city'].strip()
+        qu=request.POST['qu'].strip()
+        diqu=request.POST['diqu'].strip()
+        intro=request.POST['intro'].strip()
+        if recv =='':
+            return render(request,'users/add_addr.html',{'msg':'收件人为空'})
+        if phone =='':
+            return render(request,'users/add_addr.html',{'msg':'手机号为空'})
+        if intro =='' or province == '' or city == '' or diqu == '' or qu == '':
+            return render(request,'users/add_addr.html',{'msg':'收件人地址不完整'})
+
+    try:
+        status = request.POST['status'].strip()
+        #将其他地址改为非默认地址
+        addres=models.Address.objects.filter(user=request.user)
+        for i in addres:
+            i.status=False
+            i.save()
+        addr=models.Address(diqu=diqu,recv=recv,phone=phone,province=province,city=city,qu=qu,intro=intro,user=request.user,status=True)
+
+    except:
+        addr = models.Address(diqu=diqu,qu=qu,recv=recv, phone=phone, province=province, city=city, intro=intro, user=request.user,status=False)
+    addr.save()
+
+    return redirect('/users/addr_update/')
+
+
+
+
+#修改地址
+@login_required
+def addr_update(request):
+    addr_lists = models.Address.objects.filter(user=request.user)
+    if request.method == 'GET':
+        return render(request, 'users/addr_update.html', {'addr_list': addr_lists})
+
+    elif request.method == 'POST':
+        a_id = request.POST['addr_default']
+        addr = models.Address.objects.get(pk=a_id)
+        #找到其他的非默认地址，循环设置为False
+        other_addr = models.Address.objects.exclude(pk=a_id)
+        try:
+            addr.status = True
+            addr.save()
+            for i in other_addr:
+                i.status = False
+                i.save()
+            #重定向到修改页面
+            return redirect('users:addr_update')
+        except Exception as e:
+            print(e, '修改默认地址失败')
+            return render(request, 'users/addr_update.html', {'msg': '修改默认地址失败'})
+
+
+#删除地址
+@login_required
+def addr_del(request,addr_id):
+    address=models.Address.objects.filter(pk=addr_id)
+    address.delete()
+    return redirect('users:addr_update')
+

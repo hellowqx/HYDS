@@ -5,9 +5,11 @@ from django.http import JsonResponse
 from django.core.serializers import serialize
 from django.core.cache import cache
 from . import utils
+from django.contrib.auth.decorators import login_required
 
 
 #类型增加
+@login_required
 def add_type(request):
     if request.method=='GET':
         return render(request,'goods/add_type.html',{'msg':'请仔细填写信息：'})
@@ -32,6 +34,7 @@ def add_type(request):
 
 
 #添加商品
+@login_required
 def add_goods(request,s_id):
 
     type1 = GoodsType.objects.filter(gt_parent__isnull=True)
@@ -66,6 +69,7 @@ def add_goods(request,s_id):
                 goods.save()
                 goodsimg = models.GoodsImg(goods=goods)
                 goodsimg.save()
+                utils.goods_list_cache(request,s_id,ischange=True)
                 return render(request, 'goods/add_goods.html', {'msg': '商品添加成功', 's_id': s_id})
             else:
                 goods = models.Goods(name=name, desc=desc, stock=stock, price=price, status=status, goods_store=store,
@@ -75,6 +79,7 @@ def add_goods(request,s_id):
                 for i in path:
                     path = models.GoodsImg(path=i, goods=goods)
                     path.save()
+                    utils.goods_list_cache(request,s_id, ischange=True)
                 return render(request, 'goods/add_goods.html', {'msg': '商品添加成功','s_id':s_id})
         except Exception as e :
             print(e,'商品添加错误')
@@ -82,6 +87,7 @@ def add_goods(request,s_id):
 
 
 #修改商品信息
+@login_required
 def update_goods(request,g_id):
     type1 = GoodsType.objects.filter(gt_parent__isnull=True)
     goods=models.Goods.objects.get(pk=g_id)
@@ -147,8 +153,10 @@ def goods_info(request,g_id):
 
 
 #商品列表
+@login_required
 def goods_list(request,s_id):
     goodss=utils.goods_list_cache(request,s_id)
+    print(goodss,s_id)
     return render(request,'goods/goods_list.html',{'goodss':goodss})
 
 #商品类型2

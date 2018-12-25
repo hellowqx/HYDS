@@ -871,6 +871,7 @@
         <div class="hstyle-part">
             <ul class="newarrival-part">
                 {% for i in goods %}
+                {% if i.status == 1 %}
                 <li>
                     <a href="{% url 'goods:goods_info' i.id %}">
                         <img src="/{{i.goodsimg_set.all.last.path}}" alt="">
@@ -878,6 +879,7 @@
                     <p>￥{{i.price}} <span>￥{{i.price|add:'200'}}</span></p>
                     <button><a class="addcart" goodsid="{{i.id}}">加入购物车</a></button>
                 </li>
+                {% endif %}
                 {% empty %}
                 {% endfor %}
                 <li>

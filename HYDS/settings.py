@@ -43,7 +43,8 @@ INSTALLED_APPS = [
     'store',
     'shopcart',
     'haystack',
-    'mysearch'
+    'mysearch',
+    'orders',
 ]
 
 MIDDLEWARE = [

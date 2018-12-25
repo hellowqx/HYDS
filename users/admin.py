@@ -2,6 +2,7 @@ from django.contrib import admin
 from .models import UserInfo
 from store.models import Store
 from goods.models import Goods,GoodsImg,GoodsType
+from orders.models import OrdersItem,Orders
 
 #第二种注册方法
 @admin.register(UserInfo)
@@ -21,5 +22,7 @@ admin.site.register(Store)
 admin.site.register(Goods)
 admin.site.register(GoodsImg)
 admin.site.register(GoodsType)
+admin.site.register(Orders)
+admin.site.register(OrdersItem)
 
 # admin.site.register(User)

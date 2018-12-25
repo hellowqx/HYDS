@@ -36,6 +36,7 @@ def store_list(request):
 
 
 #店铺详情
+@login_required
 def storeinfo(request,s_id):
     store=models.Store.objects.get(pk=s_id)
 

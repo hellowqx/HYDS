@@ -24,6 +24,7 @@ urlpatterns = [
     url(r'^goods/',include('goods.urls',namespace='goods')),
     url(r'^shopcart/',include('shopcart.urls',namespace='shopcart')),
     url(r'^search/',include("haystack.urls")), # 配置检索的路由
+    url(r'^orders/',include("orders.urls",namespace='orders')),
 
 
 

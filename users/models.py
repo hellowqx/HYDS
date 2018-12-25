@@ -13,3 +13,17 @@ class UserInfo(models.Model):
     avatar=models.ImageField(upload_to='static/users/avatar/',default='static/users/avatar/default.jpg')
    #一对一外键
     user=models.OneToOneField(User,on_delete=models.CASCADE)
+
+
+class Address(models.Model):
+    id=models.AutoField(primary_key=True,verbose_name='dizhi_id')
+    recv=models.CharField(max_length=50)
+    phone=models.CharField(max_length=50,verbose_name='手机号')
+    diqu=models.CharField(max_length=50,verbose_name='diqu')
+    province=models.CharField(max_length=50,verbose_name='')
+    city=models.CharField(max_length=50,verbose_name='')
+    qu=models.CharField(max_length=50,verbose_name='')
+    intro=models.CharField(max_length=255,verbose_name='')
+    status=models.BooleanField(default=False,verbose_name='')
+
+    user = models.ForeignKey(User,on_delete=models.CASCADE)

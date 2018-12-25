@@ -1,0 +1,206 @@
+<!-- 购物车内容 -->
+<link rel="stylesheet" href="/static/css/style.css">
+<link rel="stylesheet" href="/static/css/index.css">
+<link rel="stylesheet" href="/static/css/shopcar.css">
+<script src="/static/shopcart/jquery-1.12.4.min.js"></script>
+<script type="text/javascript" src="/static/js/jquery-1.12.4.min.js"></script>
+<script type="text/javascript" src="/static/js/index.js"></script>
+<script type="text/javascript" src="/static/js/jquery.validate.js"></script>
+<script type="text/javascript" src="/static/js/messages_zh.js"></script>
+<script type="text/javascript" src="/static/js/jquery.cookie.js"></script>
+<script type="text/javascript" src="/static/js/shopcart.js"></script>
+<script type="text/javascript" src="/static/js/shopcar.js"></script>
+<link rel="stylesheet" href="/static/shopcart/shop-cart.css">
+<script type="text/javascript" src="/static/shopcart/index.js"></script>
+<!--css类引用-->
+<link rel="stylesheet" href="/static/shopcart/js/layui/css/layui.css"/>
+<link rel="stylesheet" href="/static/shopcart/js/eleme-ui/index.css"/>
+<link rel="stylesheet" href="/static/shopcart/css/ShoppingCart.css"/>
+<script type="text/javascript" src="/static/shopcart/js/vue/vue.min.js"></script>
+<script type="text/javascript" src="/static/shopcart/js/eleme-ui/index.js"></script>
+<script type="text/javascript" src="/static/shopcart/js/ShoppingCart.js"></script>
+{% comment %}
+<div class='wrap'>
+    <div class='warm_tip'><span>温馨提示：</span>购物车中商品无法保留库存，请您及时下单结算</div>
+    <div class="shopping_nr" style="margin-top: -30px; ">
+        <div class="car-top">
+            <div class="car-top-top">
+                <p>我的购物车</p>
+                <a href="/users/index/">继续逛逛 &gt;</a>
+            </div>
+            <div class="car-main">
+                <form action="{% url 'orders:order_confirm' %}" method="post">
+                    {% csrf_token %}
+                    <div class="car-main-top">
+                        <div class="cart-select">
+                            <input type="checkbox" name="buy_all_id" value="">
+                            <span>全选</span>
+                        </div>
+                        <div class="cart-good">
+                            <span>商品</span>
+                        </div>
+                        <div class="cart-spec pull-left">
+                            <span>规格</span>
+                        </div>
+                        <div class="cart-price pull-left">
+                            <span>单价(元)</span>
+                        </div>
+                        <div class="cart-number pull-left">
+                            <span>数量</span>
+                        </div>
+                        <div class="cart-sum pull-left">
+                            <span>小计(元)</span>
+                        </div>
+                        <div class="cart-action pull-left">
+                            <span>操作</span>
+                        </div>
+                    </div>
+                    <div class="car-main-main">
+                        <div class="car-main-main-top">
+                            <ul class="list-main">
+                                {% for i in shoplist %}
+                                <li class="list-main-x">
+                                    <div class="shop-list">
+                                        <div class="shop-list-first">
+                                            <input type="checkbox" name="shopcart_id" value="{{i.id}}">
+                                        </div>
+                                        <div class="shop-list-img">
+                                            <a href="javascript:;">
+                                                <img src="/{{i.goods.goodsimg_set.all.last.path}}" alt="">
+                                            </a>
+                                        </div>
+                                        <div class="shop-list-name">
+                                            <p><a href="javascript:;">{{i.goods.name}}</a></p>
+                                        </div>
+                                        <div class="shop-list-num">
+                                            <p>1</p>
+                                        </div>
+                                        <div class="shop-jg">
+                                            <p class="play-d" name="{{i.goods.name}}" date-{{i.id}}="{{i.goods.price}}">
+                                                ￥{{i.goods.price}}</p>
+                                        </div>
+                                        <div class="shop-nub">
+                                            <span class="nub-jian">-</span>
+                                            <input type="text" value="{{i.num}}" class="shop-nub-zeng" goods_id="{{i.id}}">
+                                            <span class="nub-jia">+</span>
+                                        </div>
+                                        <div class="shop-sum">
+                                            <p>￥{{i.subtotal}}</p>
+                                        </div>
+                                        <div class="shop-dlt">
+                                            <a href="{% url 'shopcart:del_shopcart' i.id %}"><p class="dlt">删除</p></a>
+                                        </div>
+                                    </div>
+                                </li>
+                                {% empty%}
+                                <h3>购物车没有商品</h3>
+                                {% endfor %}
+                            </ul>
+                        </div>
+
+                    </div>
+                    <div class="car-main-bottom">
+                        <div class="play">
+                            <span>已选择 <b>{{shoplist|length}}件</b> 商品  |  订单金额</span>
+                            <p class="sum">￥0</p>
+                            <input type="submit" value="提交订单">
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        //------------------------------------
+        {% comment %}
+        <div class="row" id="myVue" v-cloak>
+            <div class="col-lg-10 col-lg-offset-1">
+                <div class="layui-form">
+
+                    <table class="ShopCartTable layui-table">
+                        <thead>
+                        <tr>
+                            <th class="selectLeft">
+                                <template>
+                                    <el-checkbox @change="checkedAllBtn(checkedAll)" v-model="checkedAll">全选
+                                    </el-checkbox>
+                                </template>
+                                <span class="selectLeftGoods">商品或服务名称</span>
+                            </th>
+                            <th>单价</th>
+                            <th>数量</th>
+                            <th>小计</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for i in shoplist %}
+                        <tr v-for="(tabledatas,index) in shopTableDatas">
+                            <td class="selectLeft">
+                                <template>
+                                    <el-checkbox @change="checkedRadioBtn(tabledatas)"
+                                                 v-model="tabledatas.checked"></el-checkbox>
+                                </template>
+                                <span class="goodName">
+								<img class="goodImg" src="/{{i.goods.goodsimg_set.all.last.path}}"/>
+							</span>
+                                <span class="goodName goodsName">
+								<h2 class="goodname" v-text="">{{i.goods.name}}</h2>
+								<p class="goodGary">
+									<span>供应商：</span>
+									<span v-text="tabledatas.supplier"></span>
+								</p>
+								<p class="goodGary">
+									<span>发货地：</span>
+									<span v-text="tabledatas.ConPlace"></span>
+								</p>
+							</span>
+                            </td>
+                            <td class="danPrice">{{i.goods.price}}</td>
+                            <td>
+                                <i @click="goodNum(tabledatas,-1)" class="fa  deleteBtn" aria-hidden="true">-</i>
+                                <input value="{{i.num}}" type="text" class="form-control numInput"
+                                       aria-label="..." v-model="tabledatas.num">
+                                <i @click="goodNum(tabledatas,1)" class="fa  addBtn" aria-hidden="true">+</i>
+                            </td>
+                            <td>
+                                <p class="totalPrice">{{i.subtotal}}</p>
+                            </td>
+                            <td class="gongneng">
+                                <p class="deletegoods" @click="alertRadio(index)">删除</p>
+                                <p @click="alertmovesSavegoods(index)">移到我的收藏</p>
+                                <template v-if="tabledatas.saveandremove">
+                                    <p @click="tabledatas.saveandremove = false">加入收藏</p>
+                                </template>
+                                <template v-else>
+                                    <p :class="{'saveCheck':!tabledatas.saveandremove}"
+                                       @click="tabledatas.saveandremove = true">取消收藏</p>
+                                </template>
+                            </td>
+                            {% empty%}
+                            <h3>购物车没有商品</h3>
+                            {% endfor %}
+                        </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="row tablefooter">
+                        <template>
+                            <el-checkbox style="padding-left:16px" @change="checkedAllBtn(checkedAll)"
+                                         v-model="checkedAll">全选
+                            </el-checkbox>
+                        </template>
+                        <span class="removeMuch" @click="alertMuch">删除选中的商品或服务</span>
+                        <span class="removeSaves" @click="alertMuchgoods">移到我的收藏</span>
+                        <span class="servicenum">已选择<span class="goodsNum">{{goodsNum}}</span>件商品<span class="goodsNum">{{serviceNum}}</span>项服务</span>
+                        <span class="totalclassPoin">总价：<span class="totalMoneyClass">{{123456}}</span></span>
+                        <span @click="saveData" class="SettlementBtn">去结算</span>
+                    </div>
+                </div>
+            </div>
+        </div>{% endcomment %}
+    </div>
+</div>
+{% endcomment %}
+
+
+

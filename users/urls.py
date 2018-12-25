@@ -15,6 +15,11 @@ urlpatterns = [
     url(r'^changeinfo/$', views.changeinfo,name='changeinfo'),
     url(r'^changeavatar/$', views.changeavatar,name='changeavatar'),
     url(r'^changepwd/$', views.changepwd,name='changepwd'),
+    #地址
+    url(r'^add_addr/$', views.add_addr,name='add_addr'),
+    url(r'^addr_update/$', views.addr_update,name='addr_update'),
+    url(r'^(?P<addr_id>\d+)/addr_del/$', views.addr_del,name='addr_del'),
+
     url(r'^$',views.index,name='index'),
 
 ]
