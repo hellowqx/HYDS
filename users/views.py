@@ -13,6 +13,7 @@ from django.core.mail import send_mail
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from django.http import JsonResponse
 from goods.models import Goods
+from store.models import Store
 from utils import utils
 from django.core.paginator import Paginator
 
@@ -26,7 +27,10 @@ def index(request):
     pagesize = settings.PAGESIZE
     paginator = Paginator(goods, pagesize)
     page = paginator.page(pageNow)
-    goods=Goods.objects.filter()
+    #找到店铺状态为营业的店列表
+    stores=Store.objects.filter(status=1)
+    #找到营业的店的商品
+    goods=Goods.objects.filter(goods_store_id__in=stores)
     return render(request,'index.html',{'goods':goods,'page':page})
 
 
