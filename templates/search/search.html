@@ -3,16 +3,16 @@
 <div style="margin: auto;text-align: center">
 {% if query %}
 <h3>搜索结果如下：</h3>
+    <br><br>
 {% for result in page.object_list %}
-<a href="/goods/{{ result.object.id }}/goods_info/">
-    <ul>
-        <li><img src="/{{ result.object.goodsimg_set.all.last.path }}" alt="" style="width: 200px; height: 200px;margin: auto;"></li>
+    <ul >
+        <li><a href="/goods/{{ result.object.id }}/goods_info/"><img src="/{{ result.object.goodsimg_set.all.last.path }}" alt="" style="width: 200px; height: 200px;margin: auto;"></a></li>
         <li>名称：{{ result.object.name }}</li>
         <li>价格：{{ result.object.price }}</li>
         <li>库存：{{ result.object.stock }}</li>
 
     </ul>
-</a><br/>
+<br/>
 {% empty %}
 <p>啥也没找到</p>
 {% endfor %}

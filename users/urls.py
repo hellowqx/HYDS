@@ -20,6 +20,6 @@ urlpatterns = [
     url(r'^addr_update/$', views.addr_update,name='addr_update'),
     url(r'^(?P<addr_id>\d+)/addr_del/$', views.addr_del,name='addr_del'),
 
-    url(r'^$',views.index,name='index'),
+    url(r'^.*?$',views.index,name='index'),
 
 ]

@@ -16,6 +16,7 @@ from goods.models import Goods
 from store.models import Store
 from utils import utils
 from django.core.paginator import Paginator
+from goods.models import GoodsType
 
 
 #主页
@@ -27,6 +28,11 @@ def index(request):
     pagesize = settings.PAGESIZE
     paginator = Paginator(goods, pagesize)
     page = paginator.page(pageNow)
+    #查找一级类型
+    goodstype1=GoodsType.objects.filter(gt_parent__isnull=True)
+    #查找二 级类型
+    goodstype2=GoodsType.objects.filter(gt_parent__isnull=False)
+
     #找到店铺状态为营业的店列表
     stores=Store.objects.filter(status=1)
     #找到营业的店的商品
@@ -94,9 +100,9 @@ def logins(request):
                 if request.session['code'].upper() != code.upper():
                     return render(request, 'users/login.html', {'msg': '验证码错误'})
                 else:
-                    request.session['num'] = 0
+                    pass
             except:
-                return render(request, 'users/login.html', {'msg': '验证码不能为空'})
+                return render(request, 'users/login.html', {'msg': '填写验证码'})
 
         # 判断用户
         user= authenticate(username=username, password=password)
