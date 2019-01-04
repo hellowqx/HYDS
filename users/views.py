@@ -85,12 +85,14 @@ def logins(request):
         except:
             next_url = '/users/index/'
         print(next_url)
-        return render(request, 'users/login.html', {'msg': '请填写登录信息！', 'next_url': next_url})
+        request.session['next'] = next_url
+        return render(request, 'users/login.html', {'msg': '请填写登录信息！'})
     elif request.method == 'POST':
         request.session['num'] += 1
         username = request.POST['name'].strip()
         password = request.POST['pwd'].strip()
-        next_url = request.POST.get('next', '/users/index/')
+        # next_url = request.POST.get('next', '/users/index/')
+        next_url=request.session['next']
         print(next_url,'要跳转的页面链接')
         # 判断验证码
         if request.session['num'] > 2:
@@ -109,6 +111,7 @@ def logins(request):
         if user is not None:
             if user.is_active:
                 login(request,user)
+                del request.session['next']
                 return redirect(next_url)
                 # return redirect('/users/index/')
             else:
